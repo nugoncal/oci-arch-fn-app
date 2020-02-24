@@ -1,0 +1,13 @@
+# Output variables from created compute instance
+
+output "instance_ocid1" {
+  value = "${oci_core_instance.compute_instance1.id}"
+}
+
+output "public_ip1" {
+  value = "${oci_core_instance.compute_instance1.public_ip}"
+}
+
+output "private_ip1" {
+  value = "${oci_core_instance.compute_instance1.private_ip}"
+}
