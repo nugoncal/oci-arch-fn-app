@@ -1,102 +1,103 @@
-# Deploy an event-triggered serverless application
-A deployable solution for event-triggered serverless application on Oracle Cloud Infrastructure.
+# oci-arch-fn-app
 
-## Pre-Requisites
+Oracle Functions is a serverless, highly scalable, fully managed platform built on Oracle Cloud Infrastructure and powered by the Fn Project open source engine. Developers can use it to write and deploy code that delivers business value without worrying about provisioning or managing the underlying infrastructure. Oracle Functions is container-native with functions packaged as Docker container images.
 
-- You need an Oracle cloud account. Sign up here to create a free trial on OCI - [OCI free trial link](https://www.oracle.com/cloud/free/)
+## Terraform Provider for Oracle Cloud Infrastructure
+The OCI Terraform Provider is now available for automatic download through the Terraform Provider Registry. 
+For more information on how to get started view the [documentation](https://www.terraform.io/docs/providers/oci/index.html) 
+and [setup guide](https://www.terraform.io/docs/providers/oci/guides/version-3-upgrade.html).
 
-- Terraform — use the link to download terraform. Choose the operating systems you plan to work on - [Terraform download](https://www.terraform.io/downloads.html)
+* [Documentation](https://www.terraform.io/docs/providers/oci/index.html)
+* [OCI forums](https://cloudcustomerconnect.oracle.com/resources/9c8fa8f96f/summary)
+* [Github issues](https://github.com/terraform-providers/terraform-provider-oci/issues)
+* [Troubleshooting](https://www.terraform.io/docs/providers/oci/guides/guides/troubleshooting.html)
 
-- Follow the steps in the video link to install terrafor - [Install Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html)
+## Clone the Module
+Now, you'll want a local copy of this repo. You can make that with the commands:
 
-(Note that, for linux and mac install steps are similar, except the file to be edited shown in the video link is —> `profile` for linux and `bash_profile` for mac)
+    git clone https://github.com/oracle-quickstart/oci-arch-fn-app.git
+    cd oci-arch-fn-app
+    ls
 
-Verify terraform is installed successfully using below command.
+## Prerequisites
+First off, you'll need to do some pre-deploy setup.  That's all detailed [here](https://github.com/cloud-partners/oci-prerequisites).
 
-`terraform --version`
+Secondly, create a `terraform.tfvars` file and populate with the following information:
 
-## Deploying the solution
+```
+# Authentication
+tenancy_ocid         = "<tenancy_ocid>"
+user_ocid            = "<user_ocid>"
+fingerprint          = "<finger_print>"
+private_key_path     = "<pem_private_key_path>"
 
-### Step 1: Updating the configuration files
+# SSH Keys
+ssh_public_key  = "<public_ssh_key_path>"
 
-This solution uses Terraform to spin up the infrastructure.
+# Region
+region = "<oci_region>"
 
-Go ahead and clone this repo using below command.
+# Compartment
+compartment_ocid = "<compartment_ocid>"
 
-`git clone https://github.com/oracle-quickstart/oci-arch-fn-app.git`
+````
 
-Once you clone, open in your machine using your favorite editor. (Vim, Sublime, VSCode, Atom etc.)
+Deploy:
 
-In the opened editor, edit the file `env.sh` to fill in the details specific to your account on OCI.
+    terraform init
+    terraform plan
+    terraform apply
 
-#### *** Optional Step ***
 
-In `vars.tf` file, if you would like to change default values provided for terraform variables, please go ahead and update it.
+## Post-Deployment Setup
 
-When all the variables are set, you are ready to run the terraform script.
-
-### Step 2: Running the script for infrastructure provisioning
-
-On the terminal or command line, make sure you are inside the working directory. If not, cd into the folder `oci-arch-ci-cd` using below command
-
-`cd oci-arch-fn-app`
-
-Let’s export all the variables from `env.sh` into current directory.
-
-`source env.sh`
-
-Initialize terraform using below command
-
-`terraform init`
-
-Plan the terraform using below command
-
-`terraform plan`
-
-Apply Terraform using below command
-
-`terraform apply`
-
-It will prompt ***Enter a value***. Type ***yes***
-
-This will start creating the resources on OCI and might take ~15 min to finish the job.
-
-The terraform script creates all the necessery infrastructure components including  Networking, Compute Instance and Function on OCI.
-
-Once it completes, you should be able to login to OCI and see all the resources provisioned as expected in terraform.
-
-### Step 3: Configure OCI-CLI
+### Step 1: Configure OCI-CLI
 
 Go to OCI console -> Compute -> Instances.
 
-You should be able to see the instance `function-server-instance`
+You should be able to see the instance `function-instance`
 
 Copy the public-ip of the instance. ssh into the instance using below command
 
-`ssh -i <path-to-ssh-private-key> opc@<public-ip-of-function-server-instance>`
+`ssh -i <path-to-ssh-private-key> opc@<public-ip-of-function-instance>`
 
-once you are logged in, make sure OCI-CLI is installed using 
+once you are logged in, make sure oci-cli is installed using 
 
 `oci -v`
 
-Next, enter the command `oci setup config`
+Next, run the command `oci setup config`
 
-Press Enter when prompted for directory name to accept the default. 
-Enter the details about tenancy OCID, user OCID.
-Enter `Y` for `New RSA key pair`. Press Enter and accept default options for directories. 
+Press `Enter` when prompted for a location for config file.
+
+Press `Enter` when prompted for directory name to accept the default.
+
+Enter the details about user OCID, tenancy OCID and region.
+
+Enter `Y` for `New RSA key pair`. 
+
+Press Enter and accept default options for directories for keys and name for the keys. 
+
 Press Enter when prompted for passphrase so as to leave it blank.
 
 Verify all the files exists by checking in -> `cd /home/opc/.oci` and then `ls`.
 
-Also, do `cat config` and make sure all the details about tenancy are correct.
+You should see these files.
 
-Now, do `cat oci_api_key_public.pem` and copy the key contents. 
+![](./images/1.png)
 
-Login to OCI console, go to your profile and user. Click on `Add Public Key` and copy paste the contents of the file copied in last step. Now make sure the `fingerprint` generated is same as the one in Jenkins server `/home/opc/.oci/config` file.
+Run `cat config` and make sure all the details about tenancy are correct.
+
+Now, do `cat oci_api_key_public.pem` and copy the contents of the file. 
+
+Login to OCI console, go to your profile and then your username. 
+
+Click on `Add Public Key` and paste the contents of the file copied in last step. 
+
+Make sure the `fingerprint` is generated and also check it is same as the one in Jenkins Instance `/home/opc/.oci/config` file. 
 
 We are done.
 
-### Step 4: Add user to group
+### Step 2: Add user to group
 
 Go to OCI console -> Identity -> Groups.
 
@@ -106,7 +107,7 @@ Click on `Add User to Group` at bottom. This opens up a new window.
 
 Choose your username from the dropdown and add it.
 
-## Step 5: Generate OCIR token
+### Step 3: Generate OCIR token
 
 Login to OCI console.
 
@@ -114,9 +115,9 @@ Click on your `Profile` -> `User Settings`. On the bottom left, click on `Auth T
 
 Provide a discription and then hit `Generate Token`. This will generate a token. Make sure to copy the token and save it for future steps.
 
-## Step 6: Run function commands to setup
+## Step 4: Run function commands
 
-Log in to instance `ssh -i <path-to-ssh-private-key> opc@<public-ip-of-function-server-instance>`
+Log in to instance `ssh -i <path-to-ssh-private-key> opc@<public-ip-of-function-instance>`
 
 Run the below commands one after another. Make sure to edit the values when necessery.
 
@@ -128,7 +129,7 @@ Run the below commands one after another. Make sure to edit the values when nece
 `fn update context oracle.profile DEFAULT`
 `fn init --runtime java cloud-events-demo-fn`
 
-## Step 7: Update the code and deploy the function
+## Step 5: Update the code and deploy the function
 
 On the logged instance, do `ls` and now you should see the folder `cloud-events-demo-fn` that contains a boiler template code.
 
@@ -138,11 +139,17 @@ Run -> `rm /home/opc/cloud-events-demo-fn/src/test/java/com/example/fn/HelloFunc
 
 Next, cd into the folder -> `cd cloud-events-demo-fn`
 
-Edit the `pom.xml` and `/home/opc/cloud-events-demo-fn/src/main/java/com/example/fn/HelloFunction.java` file. Go to below link and copy the content for the corresponding files and replace them in `pom.xml` and `HelloFunction.java` files. 
+Edit the `pom.xml` and `/home/opc/cloud-events-demo-fn/src/main/java/com/example/fn/HelloFunction.java` file. 
+
+Go to below links and copy the content for the corresponding files and replace them in `pom.xml` and `HelloFunction.java` files on `function-instance`. 
+
+`https://gist.github.com/KartikShrikantHegde/15211d081629fb33af3e4f23e9cb89bd`
+
+`https://gist.github.com/KartikShrikantHegde/f73247396db15e93f0abbda723c07bc7`
 
 *** Imp Note ***
 
-Before we deploy the function, please type `exit` from instance and ssh back in.
+Before we deploy the function, type `exit` from function-instance and ssh back in.
 
 Now, its time to deploy the function.
 
@@ -150,12 +157,13 @@ Now, its time to deploy the function.
 
 Enter the username and password when asked.
 
-Username -> <your-tenancy-namespace>/oracleidentitycloudservice/<abc@xyz.com (use your email here)> (look for namespace in tenancy details for <your-tenancy-namespace>)
-Password -> OCIR token we had created in Step 5
+<Username> -> <your-tenancy-namespace>/oracleidentitycloudservice/<your-oci-user-email-here> (look for namespace in tenancy details on your OCI console for <your-tenancy-namespace>)
+
+<Password> -> OCIR token we had created in Step 3
 
 Start the docker service
 
-`sudo service docker start`
+`sudo systemctl start docker`
 
 Next do, `cd cloud-events-demo-fn`
 
@@ -163,36 +171,46 @@ Now deploy the function using below commands.
 
 `fn --verbose deploy --app cloud-events-demo`
 
-## Step 8: Create an event service
+## Step 6: Create an event service and object storage bucket
 
 Login to OCI console. 
 
-Click on OCI object storage on the left side bar, create a bucket named `bucket` and make sure to enable `emit events` as shown below.
+Click on `Object Storage` on the left side bar, create a bucket named `bucket` and make sure to enable `emit events` as shown below.
 
-Next, To create a new cloud event rule, click on Application Integration -> Events Service in the sidebar menu
+![](./images/2.png)
+
+Next, To create a new cloud event rule, click on `Application Integration` -> `Events Service` in the sidebar menu.
 
 Click on 'Create Rule' and populate the form as shown below.
 
+![](./images/3.png)
 
 Also, go to created function `cloud-events-demo` and make sure to enable the logs as shown below on OCI console.
 
+![](./images/4.png)
 
-## Step 9: Invoking the function
+## Step 7: Invoking the function
 
-On the object storage bucket we just created named `bucket`, upload a sample image, as shown below.
+To the object storage bucket we just created named `bucket`, upload a sample image.
 
-## Step 10: Verification
+## Step 8: Verification
 
-The uploaded image triggers the event, which invokes the function. The logs of the metadata about the object are written to object storage. Wait for ~10 for the logs to appear in the object storage.
+The uploaded image triggers the event, which invokes the function. The logs of the metadata about the object are written to object storage. Wait for ~15 mins for the logs to appear in the object storage.
 
-You can see the logs as shown below and also download it for reference.
+You can see the logs in a new bucket as shown below and also download it if needed.
 
-## Step 11: Delete the resources
+![](./images/5.png)
 
-Finally, if you like to destroy all the created resources, run below command from where you were running terraform code before.
+## Destroy the Deployment
+When you no longer need the deployment, you can run this command to destroy it:
 
-`terraform destroy`
+    terraform destroy
 
-It will prompt ***Enter a value***. Type ***yes***
+## Serverless Architecture
 
-This completes the deployment.
+![](./images/serverless-oci.png)
+
+
+## Reference Archirecture
+
+- [Deploy an event-triggered serverless application](https://docs.oracle.com/en/solutions/event-triggered-serverless-app/index.html)

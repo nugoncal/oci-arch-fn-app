@@ -22,5 +22,3 @@ sudo systemctl status docker
 sudo curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
 
 sudo echo "Script run complete and exiting"
-
-command || exit 1
