@@ -119,14 +119,20 @@ Provide a discription and then hit `Generate Token`. This will generate a token.
 
 Log in to instance `ssh -i <path-to-ssh-private-key> opc@<public-ip-of-function-instance>`
 
-Run the below commands one after another. Make sure to edit the values when necessery.
+Run the below commands one after another. Make sure to edit the values where necessery.
 
 `fn create context my-context --provider oracle`
+
 `fn use context my-context`
+
 `fn update context oracle.compartment-id "<COMPARTMENT-OCID>"`
+
 `fn update context api-url https://functions.us-ashburn-1.oraclecloud.com`
+
 `fn update context registry iad.ocir.io/<OCI_NAMESPACE>/acme-repo`
+
 `fn update context oracle.profile DEFAULT`
+
 `fn init --runtime java cloud-events-demo-fn`
 
 ## Step 5: Update the code and deploy the function
@@ -139,13 +145,16 @@ Run -> `rm /home/opc/cloud-events-demo-fn/src/test/java/com/example/fn/HelloFunc
 
 Next, cd into the folder -> `cd cloud-events-demo-fn`
 
-Edit the `pom.xml` and `/home/opc/cloud-events-demo-fn/src/main/java/com/example/fn/HelloFunction.java` file. 
+Lets edit the `pom.xml` and `/home/opc/cloud-events-demo-fn/src/main/java/com/example/fn/HelloFunction.java` file. To do that: 
 
 Go to below links and copy the content for the corresponding files and replace them in `pom.xml` and `HelloFunction.java` files on `function-instance`. 
 
-`https://gist.github.com/KartikShrikantHegde/15211d081629fb33af3e4f23e9cb89bd`
-
-`https://gist.github.com/KartikShrikantHegde/f73247396db15e93f0abbda723c07bc7`
+````
+https://gist.github.com/KartikShrikantHegde/15211d081629fb33af3e4f23e9cb89bd
+````
+````
+https://gist.github.com/KartikShrikantHegde/f73247396db15e93f0abbda723c07bc7
+````
 
 *** Imp Note ***
 
@@ -157,15 +166,15 @@ Now, its time to deploy the function.
 
 Enter the username and password when asked.
 
-<Username> -> <your-tenancy-namespace>/oracleidentitycloudservice/<your-oci-user-email-here> (look for namespace in tenancy details on your OCI console for <your-tenancy-namespace>)
+`Username` -> <your-tenancy-namespace>/oracleidentitycloudservice/<your-oci-user-email-here> (look for namespace in tenancy details on your OCI console for <your-tenancy-namespace>)
 
-<Password> -> OCIR token we had created in Step 3
+`Password` -> OCIR token we had created in Step 3
 
 Start the docker service
 
 `sudo systemctl start docker`
 
-Next do, `cd cloud-events-demo-fn`
+Next run, `cd cloud-events-demo-fn`
 
 Now deploy the function using below commands.
 
@@ -179,15 +188,19 @@ Click on `Object Storage` on the left side bar, create a bucket named `bucket` a
 
 ![](./images/2.png)
 
+
 Next, To create a new cloud event rule, click on `Application Integration` -> `Events Service` in the sidebar menu.
 
 Click on 'Create Rule' and populate the form as shown below.
 
 ![](./images/3.png)
 
+
 Also, go to created function `cloud-events-demo` and make sure to enable the logs as shown below on OCI console.
 
+
 ![](./images/4.png)
+
 
 ## Step 7: Invoking the function
 
