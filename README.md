@@ -61,7 +61,7 @@ Copy the public-ip of the instance. ssh into the instance using below command
 
 `ssh -i <path-to-ssh-private-key> opc@<public-ip-of-function-instance>`
 
-once you are logged in, make sure oci-cli is installed using 
+once you are logged in, make sure oci-cli is installed using:
 
 `oci -v`
 
@@ -115,7 +115,7 @@ Click on your `Profile` -> `User Settings`. On the bottom left, click on `Auth T
 
 Provide a discription and then hit `Generate Token`. This will generate a token. Make sure to copy the token and save it for future steps.
 
-## Step 4: Run function commands
+### Step 4: Run function commands
 
 Log in to instance `ssh -i <path-to-ssh-private-key> opc@<public-ip-of-function-instance>`
 
@@ -135,7 +135,7 @@ Run the below commands one after another. Make sure to edit the values where nec
 
 `fn init --runtime java cloud-events-demo-fn`
 
-## Step 5: Update the code and deploy the function
+### Step 5: Update the code and deploy the function
 
 On the logged instance, do `ls` and now you should see the folder `cloud-events-demo-fn` that contains a boiler template code.
 
@@ -145,7 +145,9 @@ Run -> `rm /home/opc/cloud-events-demo-fn/src/test/java/com/example/fn/HelloFunc
 
 Next, cd into the folder -> `cd cloud-events-demo-fn`
 
-Lets edit the `pom.xml` and `/home/opc/cloud-events-demo-fn/src/main/java/com/example/fn/HelloFunction.java` file. To do that: 
+Lets edit the `pom.xml` and `/home/opc/cloud-events-demo-fn/src/main/java/com/example/fn/HelloFunction.java` file. 
+
+To do that: 
 
 Go to below links and copy the content for the corresponding files and replace them in `pom.xml` and `HelloFunction.java` files on `function-instance`. 
 
@@ -166,7 +168,7 @@ Now, its time to deploy the function.
 
 Enter the username and password when asked.
 
-`Username` -> <your-tenancy-namespace>/oracleidentitycloudservice/<your-oci-user-email-here> (look for namespace in tenancy details on your OCI console for <your-tenancy-namespace>)
+`Username` -> `<your-tenancy-namespace>/oracleidentitycloudservice/<your-oci-user-email-here>` (look for namespace in tenancy details on your OCI console for `<your-tenancy-namespace>`)
 
 `Password` -> OCIR token we had created in Step 3
 
@@ -174,13 +176,13 @@ Start the docker service
 
 `sudo systemctl start docker`
 
-Next run, `cd cloud-events-demo-fn`
+Next run: `cd cloud-events-demo-fn`
 
 Now deploy the function using below commands.
 
 `fn --verbose deploy --app cloud-events-demo`
 
-## Step 6: Create an event service and object storage bucket
+### Step 6: Create an event service and object storage bucket
 
 Login to OCI console. 
 
@@ -191,7 +193,7 @@ Click on `Object Storage` on the left side bar, create a bucket named `bucket` a
 
 Next, To create a new cloud event rule, click on `Application Integration` -> `Events Service` in the sidebar menu.
 
-Click on 'Create Rule' and populate the form as shown below.
+Click on `Create Rule` and populate the form as shown below.
 
 ![](./images/3.png)
 
@@ -202,11 +204,11 @@ Also, go to created function `cloud-events-demo` and make sure to enable the log
 ![](./images/4.png)
 
 
-## Step 7: Invoking the function
+### Step 7: Invoking the function
 
 To the object storage bucket we just created named `bucket`, upload a sample image.
 
-## Step 8: Verification
+### Step 8: Testing
 
 The uploaded image triggers the event, which invokes the function. The logs of the metadata about the object are written to object storage. Wait for ~15 mins for the logs to appear in the object storage.
 
