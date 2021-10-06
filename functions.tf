@@ -15,7 +15,7 @@ resource "oci_functions_function" "test_function" {
     image = "${local.ocir_docker_repository}/${local.ocir_namespace}/${var.ocir_repo_name}/cloud-events-demo-fn:0.0.1"
     memory_in_mbs = "256" 
     config = { 
-
+      "REGION" : "${var.region}"
     }
     defined_tags   = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
